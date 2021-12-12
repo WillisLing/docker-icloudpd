@@ -1,0 +1,1 @@
+docker build -t willisling/docker-icloudpd[:TAGNAME] [--no-cache] .
