@@ -1,5 +1,5 @@
 FROM alpine:3.14.3
-MAINTAINER willisling
+LABEL org.opencontainers.image.authors="willisling@live.com"
 
 ENV config_dir="/config"
 
