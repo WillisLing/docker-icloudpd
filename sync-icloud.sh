@@ -253,10 +253,7 @@ CreateUser(){
          exit 1
       else
          echo "$(date '+%Y-%m-%d %H:%M:%S') INFO     Creating user ${user}:${user_id}"
-         useradd --shell /bin/ash --groups "${group}" --uid "${user_id}" "${user}" --home-dir "/home/${user}"
-         # Sometimes after 'useradd' the primary group is same as ${user}, not the ${group},
-         # so ensure the primary group is ${group}, otherwise will exit with 'ERROR User name already in use'.
-         usermod --shell /bin/ash -g "${group}" "${user}"
+         useradd --shell /bin/ash --gid "${group_id}" --uid "${user_id}" "${user}" --home-dir "/home/${user}"
       fi
    fi
 }
