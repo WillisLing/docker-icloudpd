@@ -11,10 +11,10 @@ Initialise(){
    local icloud_dot_com dns_counter
    if [ "${icloud_china}" ]; then
       icloud_domain="icloud.com.cn"
-      icloudpd_domain_kv="--domain cn"
+      icloudpd_domain="cn"
    else
       icloud_domain="icloud.com"
-      icloudpd_domain_kv="--domain com"
+      icloudpd_domain="com"
    fi
    case "${synchronisation_interval:=86400}" in
       21600) synchronisation_interval=21600;; # 6 hours
@@ -406,7 +406,7 @@ CreateUser(){
 
 ListLibraries(){
    LogInfo "Shared libraries available:"
-   shared_libraries="$(su "${user}" -c '/usr/bin/icloudpd --username "${0}" --cookie-directory "${1}" --directory "${2}" --list-libraries "${3}" | sed "1d"' -- "${apple_id}" "${config_dir}" "/dev/null")" "${icloudpd_domain_kv}"
+   shared_libraries="$(su "${user}" -c '/usr/bin/icloudpd --username "${0}" --cookie-directory "${1}" --directory "${2}" --list-libraries --domain "${3}" | sed "1d"' -- "${apple_id}" "${config_dir}" "/dev/null")" "${icloudpd_domain}"
    for library in ${shared_libraries}; do
       LogInfo " - ${library}"
    done
@@ -461,7 +461,7 @@ GenerateCookie(){
       mv "${config_dir}/${cookie_file}" "${config_dir}/${cookie_file}.bak"
    fi
    LogInfo "Generate ${authentication_type} cookie using password stored in keyring file"
-   su "${user}" -c '/usr/bin/icloudpd --username "${0}" --cookie-directory "${1}" --directory "${2}" --only-print-filenames --recent 0 "${3}"' -- "${apple_id}" "${config_dir}" "/dev/null" "${icloudpd_domain_kv}"
+   su "${user}" -c '/usr/bin/icloudpd --username "${0}" --cookie-directory "${1}" --directory "${2}" --only-print-filenames --recent 0 --domain "${3}"' -- "${apple_id}" "${config_dir}" "/dev/null" "${icloudpd_domain}"
    if [ "${authentication_type}" = "2FA" ]; then
       if [ "$(grep -c "X-APPLE-WEBAUTH-HSA-TRUST" "${config_dir}/${cookie_file}")" -eq 1 ]; then
          LogInfo "Two factor authentication cookie generated. Sync should now be successful"
@@ -638,7 +638,7 @@ CheckFiles(){
    LogInfo "Check for new files using password stored in keyring file"
    LogInfo "Generating list of files in iCloud. This may take a long time if you have a large photo collection. Please be patient. Nothing is being downloaded at this time"
    >/tmp/icloudpd/icloudpd_check_error
-   su "${user}" -c '(/usr/bin/icloudpd --directory "${0}" --cookie-directory "${1}" --username "${2}" --folder-structure "${3}" --only-print-filenames "${4}" 2>/tmp/icloudpd/icloudpd_check_error; echo $? >/tmp/icloudpd/icloudpd_check_exit_code) | tee /tmp/icloudpd/icloudpd_check.log' -- "${download_path}" "${config_dir}" "${apple_id}" "${folder_structure}" "${icloudpd_domain_kv}"
+   su "${user}" -c '(/usr/bin/icloudpd --directory "${0}" --cookie-directory "${1}" --username "${2}" --folder-structure "${3}" --only-print-filenames --domain "${4}" 2>/tmp/icloudpd/icloudpd_check_error; echo $? >/tmp/icloudpd/icloudpd_check_exit_code) | tee /tmp/icloudpd/icloudpd_check.log' -- "${download_path}" "${config_dir}" "${apple_id}" "${folder_structure}" "${icloudpd_domain}"
    check_exit_code="$(cat /tmp/icloudpd/icloudpd_check_exit_code)"
    if [ "${check_exit_code}" -ne 0 ]; then
       LogError "Failed check for new files files"
@@ -1033,7 +1033,7 @@ Notify(){
 }
 
 CommandLineBuilder(){
-   command_line="${icloudpd_domain_kv} --directory ${download_path} --cookie-directory ${config_dir} --folder-structure ${folder_structure} --username ${apple_id}"
+   command_line="--domain ${icloudpd_domain} --directory ${download_path} --cookie-directory ${config_dir} --folder-structure ${folder_structure} --username ${apple_id}"
    if [ "${photo_size}" != "original"  ]; then
       command_line="${command_line} --size ${photo_size}"
    fi
