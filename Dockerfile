@@ -1,8 +1,8 @@
 # Fix base to Alpine 3.16.1 due to:-
 # Alpine 3.14 & 3.15 - Python 3.9 incompatibility introduced: AttributeError: module 'base64' has no attribute 'decodestring'
 # Alpine 3.16        - Python 3.10 incompatibility introduced: ImportError: cannot import name 'Callable' from 'collections' (/usr/lib/python3.10/collections/__init__.py)
-FROM alpine:3.16.3
-LABEL org.opencontainers.image.authors="willisling@live.com"
+FROM alpine:3.17
+MAINTAINER boredazfcuk
 
 ENV config_dir="/config" \
    TZ="UTC"
@@ -36,7 +36,7 @@ echo "$(date '+%d/%m/%Y - %H:%M:%S') | Apply Python 3.10 fixes" && \
       -e 's/password_base64 = base64.encodestring(password_encrypted).decode()/password_base64 = base64.encodebytes(password_encrypted).decode()/' \
       "/usr/lib/python3.10/site-packages/keyrings/alt/file_base.py" && \
 echo "$(date '+%d/%m/%Y - %H:%M:%S') | Make indexing error more accurate" && \
-   # sed -i 's/again in a few minutes/again later. This process may take hours./' "/usr/lib/python3.10/site-packages/pyicloud_ipd/services/photos.py" && \
+   sed -i 's/again in a few minutes/again later. This process may take hours./' "/usr/lib/python3.10/site-packages/pyicloud_ipd/services/photos.py" && \
 echo "$(date '+%d/%m/%Y - %H:%M:%S') | Clean up" && \
    cd / && \
    rm -r "${app_temp_dir}" && \
