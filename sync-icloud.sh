@@ -171,28 +171,28 @@ Initialise(){
    if [ "${notification_type}" ]; then
       ConfigureNotifications
    fi
-   if [ "${icloud_china}" ]; then
-      LogInfo "Downloading from: icloud.com.cn"
-      LogWarning "Downloading from icloud.com.cn is untested. Please report issues at https://github.com/boredazfcuk/docker-icloudpd/issues"
-      sed -i \
-         -e "s#apple.com/#apple.com.cn/#" \
-         -e "s#icloud.com/#icloud.com.cn/#" \
-         -e "s#icloud.com\"#icloud.com.cn\"#" \
-         "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/base.py"  
-      sed -i \
-         -e "s#icloud.com/#icloud.com.cn/#" \
-         "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/services/account.py"
-   else
-      LogInfo "Downloading from: icloud.com"
-      sed -i \
-         -e "s#apple.com.cn/#apple.com/#" \
-         -e "s#icloud.com.cn/#icloud.com/#" \
-         -e "s#icloud.com.cn\"#icloud.com\"#" \
-         "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/base.py"      
-         sed -i \
-         -e "s#icloud.com.cn/#icloud.com/#" \
-         "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/services/account.py"
-   fi
+   # if [ "${icloud_china}" ]; then
+   #    LogInfo "Downloading from: icloud.com.cn"
+   #    LogWarning "Downloading from icloud.com.cn is untested. Please report issues at https://github.com/boredazfcuk/docker-icloudpd/issues"
+   #    sed -i \
+   #       -e "s#apple.com/#apple.com.cn/#" \
+   #       -e "s#icloud.com/#icloud.com.cn/#" \
+   #       -e "s#icloud.com\"#icloud.com.cn\"#" \
+   #       "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/base.py"  
+   #    sed -i \
+   #       -e "s#icloud.com/#icloud.com.cn/#" \
+   #       "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/services/account.py"
+   # else
+   #    LogInfo "Downloading from: icloud.com"
+   #    sed -i \
+   #       -e "s#apple.com.cn/#apple.com/#" \
+   #       -e "s#icloud.com.cn/#icloud.com/#" \
+   #       -e "s#icloud.com.cn\"#icloud.com\"#" \
+   #       "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/base.py"      
+   #       sed -i \
+   #       -e "s#icloud.com.cn/#icloud.com/#" \
+   #       "$(pip show pyicloud | grep "Location" | awk '{print $2}')/pyicloud/services/account.py"
+   # fi
    if [ "${trigger_nextlcoudcli_synchronisation}" ]; then
       LogInfo "Nextcloud synchronisation trigger: Enabled"
    else
@@ -1032,6 +1032,9 @@ Notify(){
 
 CommandLineBuilder(){
    command_line="--directory ${download_path} --cookie-directory ${config_dir} --folder-structure ${folder_structure} --username ${apple_id}"
+   if [ "${icloud_china}" = "True" ]; then
+      command_line="${command_line} --domain cn"
+   fi
    if [ "${photo_size}" != "original"  ]; then
       command_line="${command_line} --size ${photo_size}"
    fi
