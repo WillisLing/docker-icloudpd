@@ -48,6 +48,8 @@ An Alpine Linux Docker container for ndbroadbent's iCloud Photos Downloader. I u
 
 **auto_delete**: Scans the "Recently Deleted" folder and deletes any files found in there. (If you restore the photo in iCloud, it will be downloaded again). This variable will default to **False**.
 
+**delete_after_downlaod**: After a file is successfully downloaded it is moved to the Recenlty Deleted folder. This variable cannot be used in conjunction with **auto_delete**. This variable will default to **False**.
+
 **photo_size**: Image size to download. Can be set to **original**, **medium** or **thumb**. This variable will default to **original**.
 
 **skip_live_photos**: If this is set, it will skip downloading live photos. This variable will default to **False**.
@@ -74,7 +76,7 @@ An Alpine Linux Docker container for ndbroadbent's iCloud Photos Downloader. I u
 
 **jpeg_quality**: If HEIC to JPEG conversion is enabled, this variable will let you set the quality of the converted file by specifying a number from 0 (lowest quality) to 100 (highest quality) If convert_heic_to_jpeg is set, and this variable isn't, it will default to 90.
 
-**icloud_china**: Set this to True to use icloud.com.cm instead of icloud.com as the download source.
+**icloud_china**: Set this to True to use icloud.com.cn instead of icloud.com as the download source.
 
 **synology_photos_app_fix**: Set this to True to touch files after download and trigger the Synology Photos app to index any newly created files.
 
@@ -193,7 +195,6 @@ The process should look similar to this:
 2020-08-06 16:45:58 INFO     File permissions: 640
 2020-08-06 16:45:58 INFO     Synchronisation interval: 43200
 2020-08-06 16:45:58 INFO     Time zone: Europe/London
-2020-08-06 16:45:58 INFO     Additional command line options: --auto-delete --set-exif-datetime
 2020-08-06 16:45:58 INFO     Adding password to keyring...
 Enter iCloud password for email@address.com:
 Save password in keyring?  [y/N]: y
@@ -253,6 +254,12 @@ To run the script inside the currently running container, issue this command (as
 This command line option will delete the system keyring file. You will need to run this if you change your Apple ID password.
 To run the script inside the currently running container, issue this command (assuming the container name is 'icloudpd'):
 `docker exec -it icloudpd sync-icloud.sh --RemoveKeyring`
+
+**--EnableDebugging**
+This command line option will edit the config file so that debugging is enabled. This will automatically be picked up the next time a synchronisation takes place. There should be no need to restart the container
+
+**--DisableDebugging**
+This command line option will edit the config file so that debugging is disabled. This will automatically be picked up the next time a synchronisation takes place. There should be no need to restart the container
 
 ## HEALTH CHECK
 
