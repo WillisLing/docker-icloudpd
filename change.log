@@ -1,3 +1,11 @@
+20200330
+
+ - Change: Got rid of auth_china variable, as it doesn't work.
+
+20230329
+
+ - Change: Altered the way the log file creation works so that it can add missing/future variables and sort it into alphabetical order. 
+
 20230328
 
  - Change: Added a --enabledebugging and a --disabledebugging command line option which will edit the config file to enable/disable debugging for people who may find editing a file a little trickier on some systems... I'm thinking NAS devices may not make this so easy
