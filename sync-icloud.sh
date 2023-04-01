@@ -85,6 +85,7 @@ Initialise(){
    LogInfo "$(cat /etc/*-release | grep "^NAME" | sed 's/NAME=//g' | sed 's/"//g') $(cat /etc/*-release | grep "VERSION_ID" | sed 's/VERSION_ID=//g' | sed 's/"//g')"
    LogInfo "Python version: $(python3 --version | awk '{print $2}')"
    LogInfo "icloudpd version: $(pip3 list | grep icloudpd | awk '{print $2}')"
+   LogInfo "pyicloud version: $(pip3 list | grep pyicloud | awk '{print $2}')"
 
    if [ "${dev_mode}" = "True" ]; then
       if [ ! -e "${config_dir}/dev_mode_enabled" ]; then
@@ -161,7 +162,7 @@ Initialise(){
          exit 1
       fi
    done
-   LogDebug "IP address for icloud.com: ${icloud_dot_com}"
+   LogDebug "IP address for ${icloud_domain}: ${icloud_dot_com}"
    if [ "$(traceroute -q 1 -w 1 ${icloud_domain} >/dev/null 2>/tmp/icloudpd/icloudpd_tracert.err; echo $?)" = 1 ]; then
       LogError "No route to ${icloud_domain} found. Please check your container's network settings - exiting"
       LogError "Error debug - $(cat /tmp/icloudpd/icloudpd_tracert.err)"
@@ -554,7 +555,7 @@ DeletePassword(){
 }
 
 ConfigurePassword(){
-   LogDebug "$(date '+%Y-%m-%d %H:%M:%S') INFO     Configure password"
+   LogDebug "Configure password"
    if [ -f "${config_dir}/python_keyring/keyring_pass.cfg" ] && [ "$(grep -c "=" "${config_dir}/python_keyring/keyring_pass.cfg")" -eq 0 ]; then
       LogDebug "Keyring file ${config_dir}/python_keyring/keyring_pass.cfg exists, but does not contain any credentials. Removing"
       rm "${config_dir}/python_keyring/keyring_pass.cfg"
@@ -562,7 +563,11 @@ ConfigurePassword(){
    if [ ! -f "/home/${user}/.local/share/python_keyring/keyring_pass.cfg" ]; then
       if [ "${initialise_container}" ]; then
          LogDebug "Adding password to keyring file: ${config_dir}/python_keyring/keyring_pass.cfg"
-         su "${user}" -c '/usr/bin/icloud --username "${0}"' -- "${apple_id}"
+         if [ -z "${icloud_china}" ]; then
+            su "${user}" -c '/usr/bin/icloud --username "${0}"' -- "${apple_id}"
+         else
+            su "${user}" -c '/usr/bin/icloud --username "${0}" --domain cn' -- "${apple_id}"
+         fi
       else
          LogError "Keyring file ${config_dir}/python_keyring/keyring_pass.cfg does not exist"
          LogError " - Please add the your password to the system keyring using the --Initialise script command line option"

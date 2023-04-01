@@ -21,6 +21,7 @@ echo "$(date '+%d/%m/%Y - %H:%M:%S') | Clone ${app_repo}" && \
    cd "${app_temp_dir}" && \
 echo "$(date '+%d/%m/%Y - %H:%M:%S') | Install Python dependencies" && \
    pip3 install --upgrade pip && \
+   pip3 install -U setuptools && \
 echo "$(date '+%d/%m/%Y - %H:%M:%S') | Install ${app_repo}" && \
    pip3 install --no-cache-dir ./ && \
 echo "$(date '+%d/%m/%Y - %H:%M:%S') | Clean up" && \
