@@ -5,7 +5,7 @@ ENV config_dir="/config" \
    TZ="UTC"
 
 # build versions serve no real purpose. Increment to force a container rebuild.
-ARG build_version=127
+ARG build_version=128
 ARG app_dependencies="python3 py3-pip exiftool coreutils tzdata curl py3-certifi py3-cffi py3-cryptography py3-secretstorage py3-jeepney py3-dateutil imagemagick shadow"
 ARG build_dependencies="git"
 ARG app_repo="willisling/icloud_photos_downloader"
